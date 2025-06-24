@@ -49,7 +49,7 @@ model demand_types {
 model customer {
   customer_id        Int                  @id @default(autoincrement())
   customer_no        String               @unique
-  sc_number          String
+  sc_number          String               @unique
   full_name          String
   address            String
   mobile_no          String
@@ -292,3 +292,4 @@ model payments {
 
   @@map("payments") // Custom table name for better readability
 }
+
