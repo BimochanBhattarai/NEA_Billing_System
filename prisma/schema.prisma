@@ -18,8 +18,10 @@ model branch {
   branch_email   String
   created_at     DateTime   @default(now())
   status         String
-  customer       Customer[]
-  users          Users[]
+  customer       customer[]
+  users          users[]
+
+  @@map("branches") // Custom table name for better readability
 }
 
 // ======================= DEMAND TYPE MODEL =======================
@@ -29,20 +31,22 @@ model demand_types {
   demand_type_id         Int             @id @default(autoincrement())
   demand_type_code       String
   demand_description     String
-  base_charge            Float
-  rate_per_unit          Float
-  minimum_service_charge Float
+  base_charge            Decimal
+  rate_per_unit          Decimal
+  minimum_service_charge Decimal
   created_date           DateTime        @default(now())
   status                 String
-  customer               Customer[]
+  customer               customer[]
   penalty_rules          penalty_rules[]
   rebate_rules           rebate_rules[]
+
+  @@map("demand_types")
 }
 
 // ======================= CUSTOMER MODEL =======================
 // This model represents a customer of the NEA, including their personal details, branch association, demand type, and documents
 
-model Customer {
+model customer {
   customer_id        Int                  @id @default(autoincrement())
   customer_no        String               @unique
   sc_number          String
@@ -57,12 +61,14 @@ model Customer {
   demand_type_id     Int
   registration_date  DateTime             @default(now())
   status             String
-  user               Users                @relation(fields: [created_by], references: [user_id])
+  created_by_users   users                @relation(fields: [created_by], references: [user_id])
   created_by         Int
   customer_documents customer_documents[]
   payments           payments[]
   meter_readings     meter_readings[]
   bills              bills[]
+
+  @@map("customers") // Custom table name for better readability
 }
 
 // ======================= PENALTY RULES MODEL =======================
@@ -74,10 +80,12 @@ model penalty_rules {
   demand_type_id       Int
   overdue_days_from    Int
   overdue_days_to      Int
-  penalty_percentage   Float
-  penalty_fixed_amount Float
+  penalty_percentage   Decimal
+  penalty_fixed_amount Decimal
   created_date         DateTime     @default(now())
   status               String
+
+  @@map("penalty_rules") // Custom table name for better readability
 }
 
 // ======================= REBATE RULES MODEL =======================
@@ -88,10 +96,12 @@ model rebate_rules {
   demand_types        demand_types @relation(fields: [demand_type_id], references: [demand_type_id])
   demand_type_id      Int
   early_payment_days  Int
-  rebate_percentage   Float
-  rebate_fixed_amount Float
+  rebate_percentage   Decimal
+  rebate_fixed_amount Decimal
   created_date        DateTime     @default(now())
   status              String
+
+  @@map("rebate_rules") // Custom table name for better readability
 }
 
 // ======================= CUSTOMER DOCUMENTS MODEL =======================
@@ -99,21 +109,23 @@ model rebate_rules {
 
 model customer_documents {
   document_id       Int       @id @default(autoincrement())
-  customer          Customer  @relation(fields: [customer_id], references: [customer_id])
+  customer          customer  @relation(fields: [customer_id], references: [customer_id])
   customer_id       Int
   document_type     String
   document_path     String
   uploaded_date     DateTime  @default(now())
   verified_status   String
   verification_date DateTime?
-  user              Users     @relation(fields: [verified_by], references: [user_id])
+  verified_by_users users     @relation(fields: [verified_by], references: [user_id])
   verified_by       Int
+
+  @@map("customer_documents") // Custom table name for better readability
 }
 
 // ======================= USERS MODEL =======================
 // This model represents users of the NEA system, including their credentials, branch association, and relationships with customers and documents
 
-model Users {
+model users {
   user_id              Int                    @id @default(autoincrement())
   username             String                 @unique
   password_hash        String
@@ -126,13 +138,15 @@ model Users {
   created_date         DateTime               @default(now())
   last_login           DateTime?
   status               String
-  customers            Customer[]
+  customers            customer[]
   customer_documents   customer_documents[]
   bills                bills[]
   meter_readings       meter_readings[]
   activity_logs        activity_logs[]
   login_sessions       login_sessions[]
   system_configuration system_configuration[]
+
+  @@map("users") // Custom table name for better readability
 }
 
 // ======================= PAYMENT RECEIPT MODEL =======================
@@ -144,52 +158,60 @@ model payment_receipt {
   receipt_number String   @unique
   receipt_date   DateTime @default(now())
   generated_date DateTime @default(now())
+
+  @@map("payment_receipt") // Custom table name for better readability
 }
 
 // =======================  METER READINGS MODEL =======================
 
 model meter_readings {
   reading_id       Int      @id @default(autoincrement())
-  customer         Customer @relation(fields: [customer_id], references: [customer_id])
+  customer         customer @relation(fields: [customer_id], references: [customer_id])
   customer_id      Int
-  user             Users    @relation(fields: [meter_reader_id], references: [user_id])
+  reading_users    users    @relation(fields: [meter_reader_id], references: [user_id])
   meter_reader_id  Int
   reading_date     DateTime @default(now())
-  current_reading  Float
-  previous_reading Float
-  unit_consumed    Float
+  current_reading  Decimal
+  previous_reading Decimal
+  unit_consumed    Decimal
   bill_month       DateTime
   bill_year        Int
   reading_status   String
   created_date     DateTime @default(now())
   bills            bills[]
+
+  @@map("meter_readings") // Custom table name for better readability
 }
 
 // ======================= ACTIVITY LOGS MODEL =======================
 
 model activity_logs {
-  log_id         Int      @id @default(autoincrement())
-  user           Users    @relation(fields: [user_id], references: [user_id])
-  user_id        Int
-  activity_type  String
-  table_affected String
-  record_id      Int
-  old_value      Json?
-  new_value      Json?
-  ip_address     String
-  created_date   DateTime @default(now())
+  log_id            Int      @id @default(autoincrement())
+  activity_by_users users    @relation(fields: [user_id], references: [user_id])
+  user_id           Int
+  activity_type     String
+  table_affected    String
+  record_id         Int
+  old_value         String?
+  new_value         String?
+  ip_address        String
+  created_date      DateTime @default(now())
+
+  @@map("activity_logs") // Custom table name for better readability
 }
 
 // ======================= LOGIN SESSIONS MODEL =======================
 model login_sessions {
   session_id     Int       @id @default(autoincrement())
-  user           Users     @relation(fields: [user_id], references: [user_id])
+  login_users    users     @relation(fields: [user_id], references: [user_id])
   user_id        Int
   login_time     DateTime  @default(now())
   logout_time    DateTime?
   ip_address     String
   user_agent     String
   session_status String
+
+  @@map("login_sessions") // Custom table name for better readability
 }
 
 // ======================= SYSTEM CONFIGURATION MODEL =======================
@@ -198,37 +220,41 @@ model system_configuration {
   config_key         String   @unique
   config_value       String
   config_description String?
-  updated_by         Users?   @relation(fields: [updated_by_id], references: [user_id])
+  updated_by         users?   @relation(fields: [updated_by_id], references: [user_id])
   updated_by_id      Int?
   updated_date       DateTime @default(now())
+
+  @@map("system_configuration") // Custom table name for better readability
 }
 
 // ======================= BILLS MODEL =======================
 
 model bills {
   bill_id                Int             @id @default(autoincrement())
-  customer               Customer        @relation(fields: [customer_id], references: [customer_id])
+  customer               customer        @relation(fields: [customer_id], references: [customer_id])
   customer_id            Int
   meter_reading          meter_readings? @relation(fields: [reading_id], references: [reading_id])
   reading_id             Int?
   bill_number            String          @unique
   bill_month             DateTime
   bill_year              Int
-  current_reading        Float
-  previous_reading       Float
-  unit_consumed          Float
-  minimum_service_charge Float
-  unit_charge            Float
-  total_amount           Float
+  current_reading        Decimal
+  previous_reading       Decimal
+  unit_consumed          Decimal
+  minimum_service_charge Decimal
+  unit_charge            Decimal
+  total_amount           Decimal
   due_date               DateTime
-  panalty_amount         Float
-  rebate_amount          Float
+  penalty_amount         Decimal
+  rebate_amount          Decimal
   bill_status            String
   generated_date         DateTime        @default(now())
-  varified_by            Users?          @relation(fields: [verified_by], references: [user_id])
+  verified_by_users      users?          @relation(fields: [verified_by], references: [user_id])
   verified_by            Int?
-  varified_date          DateTime?
+  verified_date          DateTime?
   payments               payments[]
+
+  @@map("bills") // Custom table name for better readability
 }
 
 // ======================= PAYMENTS METHOD MODEL =======================
@@ -238,9 +264,11 @@ model payments_method {
   method_name               String     @unique
   method_code               String     @unique
   is_active                 Boolean    @default(true)
-  service_charge_percentage Float
+  service_charge_percentage Decimal
   created_at                DateTime   @default(now())
   payments                  payments[]
+
+  @@map("payments_method") // Custom table name for better readability
 }
 
 // ======================= PAYMENTS MODEL =======================
@@ -249,16 +277,18 @@ model payments {
   payment_id        Int               @id @default(autoincrement())
   bill              bills             @relation(fields: [bill_id], references: [bill_id])
   bill_id           Int
-  customer          Customer          @relation(fields: [customer_id], references: [customer_id])
+  customer          customer          @relation(fields: [customer_id], references: [customer_id])
   customer_id       Int
   payment_method    payments_method   @relation(fields: [payment_method_id], references: [payment_method_id])
   payment_method_id Int
-  payment_amount    Float
+  payment_amount    Decimal
   payment_date      DateTime          @default(now())
   transaction_id    String            @unique
   payment_status    String
   receipt_number    String            @unique
-  service_charge    Float
+  service_charge    Decimal
   created_date      DateTime          @default(now())
   payment_receipt   payment_receipt[]
+
+  @@map("payments") // Custom table name for better readability
 }
