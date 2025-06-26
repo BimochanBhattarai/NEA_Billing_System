@@ -3,293 +3,431 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+// datasource db {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL")
+// }
+
+// // ======================= BRANCH MODEL =======================
+// // This model represents a branch of the NEA, including its details and relationships with customers and users
+// model branch {
+//   branch_id      Int        @id @default(autoincrement())
+//   branch_name    String
+//   branch_address String
+//   branch_contact String
+//   branch_email   String
+//   created_at     DateTime   @default(now())
+//   status         String
+//   customer       customer[]
+//   users          users[]
+
+//   @@map("branches") // Custom table name for better readability
+// }
+
+// // ======================= DEMAND TYPE MODEL =======================
+// // This model represents different types of demands that can be associated with customers, including their charges and rules for penalties and rebates
+
+// model demand_types {
+//   demand_type_id         Int             @id @default(autoincrement())
+//   demand_type_code       String
+//   demand_description     String
+//   base_charge            Decimal
+//   rate_per_unit          Decimal
+//   minimum_service_charge Decimal
+//   created_date           DateTime        @default(now())
+//   status                 String
+//   customer               customer[]
+//   penalty_rules          penalty_rules[]
+//   rebate_rules           rebate_rules[]
+
+//   @@map("demand_types")
+// }
+
+// // ======================= CUSTOMER MODEL =======================
+// // This model represents a customer of the NEA, including their personal details, branch association, demand type, and documents
+
+// model customer {
+//   customer_id        Int                  @id @default(autoincrement())
+//   customer_no        String               @unique
+//   sc_number          String               @unique
+//   full_name          String
+//   address            String
+//   mobile_no          String
+//   citizenship_no     String
+//   date_of_birth      DateTime
+//   branch             branch               @relation(fields: [branch_id], references: [branch_id])
+//   branch_id          Int
+//   demand_type        demand_types         @relation(fields: [demand_type_id], references: [demand_type_id])
+//   demand_type_id     Int
+//   registration_date  DateTime             @default(now())
+//   status             String
+//   created_by_users   users                @relation(fields: [created_by], references: [user_id])
+//   created_by         Int
+//   customer_documents customer_documents[]
+//   payments           payments[]
+//   meter_readings     meter_readings[]
+//   bills              bills[]
+
+//   @@map("customers") // Custom table name for better readability
+// }
+
+// // ======================= PENALTY RULES MODEL =======================
+// // This model defines the rules for penalties applied to customers based on overdue days, including percentage and fixed amount penalties
+
+// model penalty_rules {
+//   rule_id              Int          @id @default(autoincrement())
+//   demand_types         demand_types @relation(fields: [demand_type_id], references: [demand_type_id])
+//   demand_type_id       Int
+//   overdue_days_from    Int
+//   overdue_days_to      Int
+//   penalty_percentage   Decimal
+//   penalty_fixed_amount Decimal
+//   created_date         DateTime     @default(now())
+//   status               String
+
+//   @@map("penalty_rules") // Custom table name for better readability
+// }
+
+// // ======================= REBATE RULES MODEL =======================
+// // This model defines the rules for rebates applied to customers based on early payment days, including percentage and fixed amount rebates
+
+// model rebate_rules {
+//   rule_id             Int          @id @default(autoincrement())
+//   demand_types        demand_types @relation(fields: [demand_type_id], references: [demand_type_id])
+//   demand_type_id      Int
+//   early_payment_days  Int
+//   rebate_percentage   Decimal
+//   rebate_fixed_amount Decimal
+//   created_date        DateTime     @default(now())
+//   status              String
+
+//   @@map("rebate_rules") // Custom table name for better readability
+// }
+
+// // ======================= CUSTOMER DOCUMENTS MODEL =======================
+// // This model represents documents uploaded by customers, including their type, path, and verification status
+
+// model customer_documents {
+//   document_id       Int       @id @default(autoincrement())
+//   customer          customer  @relation(fields: [customer_id], references: [customer_id])
+//   customer_id       Int
+//   document_type     String
+//   document_path     String
+//   uploaded_date     DateTime  @default(now())
+//   verified_status   String
+//   verification_date DateTime?
+//   verified_by_users users     @relation(fields: [verified_by], references: [user_id])
+//   verified_by       Int
+
+//   @@map("customer_documents") // Custom table name for better readability
+// }
+
+// // ======================= USERS MODEL =======================
+// // This model represents users of the NEA system, including their credentials, branch association, and relationships with customers and documents
+
+// model users {
+//   user_id              Int                    @id @default(autoincrement())
+//   username             String                 @unique
+//   password_hash        String
+//   full_name            String
+//   email                String                 @unique
+//   mobile_no            String
+//   user_type            String
+//   branch               branch                 @relation(fields: [branch_id], references: [branch_id])
+//   branch_id            Int
+//   created_date         DateTime               @default(now())
+//   last_login           DateTime?
+//   status               String
+//   customers            customer[]
+//   customer_documents   customer_documents[]
+//   bills                bills[]
+//   meter_readings       meter_readings[]
+//   activity_logs        activity_logs[]
+//   login_sessions       login_sessions[]
+//   system_configuration system_configuration[]
+
+//   @@map("users") // Custom table name for better readability
+// }
+
+// // ======================= PAYMENT RECEIPT MODEL =======================
+
+// model payment_receipt {
+//   receipt_id     Int      @id @default(autoincrement())
+//   payment        payments @relation(fields: [payment_id], references: [payment_id])
+//   payment_id     Int
+//   receipt_number String   @unique
+//   receipt_date   DateTime @default(now())
+//   generated_date DateTime @default(now())
+
+//   @@map("payment_receipt") // Custom table name for better readability
+// }
+
+// // =======================  METER READINGS MODEL =======================
+
+// model meter_readings {
+//   reading_id       Int      @id @default(autoincrement())
+//   customer         customer @relation(fields: [customer_id], references: [customer_id])
+//   customer_id      Int
+//   reading_users    users    @relation(fields: [meter_reader_id], references: [user_id])
+//   meter_reader_id  Int
+//   reading_date     DateTime @default(now())
+//   current_reading  Decimal
+//   previous_reading Decimal
+//   unit_consumed    Decimal
+//   bill_month       DateTime
+//   bill_year        Int
+//   reading_status   String
+//   created_date     DateTime @default(now())
+//   bills            bills[]
+
+//   @@map("meter_readings") // Custom table name for better readability
+// }
+
+// // ======================= ACTIVITY LOGS MODEL =======================
+
+// model activity_logs {
+//   log_id            Int      @id @default(autoincrement())
+//   activity_by_users users    @relation(fields: [user_id], references: [user_id])
+//   user_id           Int
+//   activity_type     String
+//   table_affected    String
+//   record_id         Int
+//   old_value         String?
+//   new_value         String?
+//   ip_address        String
+//   created_date      DateTime @default(now())
+
+//   @@map("activity_logs") // Custom table name for better readability
+// }
+
+// // ======================= LOGIN SESSIONS MODEL =======================
+// model login_sessions {
+//   session_id     Int       @id @default(autoincrement())
+//   login_users    users     @relation(fields: [user_id], references: [user_id])
+//   user_id        Int
+//   login_time     DateTime  @default(now())
+//   logout_time    DateTime?
+//   ip_address     String
+//   user_agent     String
+//   session_status String
+
+//   @@map("login_sessions") // Custom table name for better readability
+// }
+
+// // ======================= SYSTEM CONFIGURATION MODEL =======================
+// model system_configuration {
+//   config_id          Int      @id @default(autoincrement())
+//   config_key         String   @unique
+//   config_value       String
+//   config_description String?
+//   updated_by         users?   @relation(fields: [updated_by_id], references: [user_id])
+//   updated_by_id      Int?
+//   updated_date       DateTime @default(now())
+
+//   @@map("system_configuration") // Custom table name for better readability
+// }
+
+// // ======================= BILLS MODEL =======================
+
+// model bills {
+//   bill_id                Int             @id @default(autoincrement())
+//   customer               customer        @relation(fields: [customer_id], references: [customer_id])
+//   customer_id            Int
+//   meter_reading          meter_readings? @relation(fields: [reading_id], references: [reading_id])
+//   reading_id             Int?
+//   bill_number            String          @unique
+//   bill_month             DateTime
+//   bill_year              Int
+//   current_reading        Decimal
+//   previous_reading       Decimal
+//   unit_consumed          Decimal
+//   minimum_service_charge Decimal
+//   unit_charge            Decimal
+//   total_amount           Decimal
+//   due_date               DateTime
+//   penalty_amount         Decimal
+//   rebate_amount          Decimal
+//   bill_status            String
+//   generated_date         DateTime        @default(now())
+//   verified_by_users      users?          @relation(fields: [verified_by], references: [user_id])
+//   verified_by            Int?
+//   verified_date          DateTime?
+//   payments               payments[]
+
+//   @@map("bills") // Custom table name for better readability
+// }
+
+// // ======================= PAYMENTS METHOD MODEL =======================
+
+// model payments_method {
+//   payment_method_id         Int        @id @default(autoincrement())
+//   method_name               String     @unique
+//   method_code               String     @unique
+//   is_active                 Boolean    @default(true)
+//   service_charge_percentage Decimal
+//   created_at                DateTime   @default(now())
+//   payments                  payments[]
+
+//   @@map("payments_method") // Custom table name for better readability
+// }
+
+// // ======================= PAYMENTS MODEL =======================
+
+// model payments {
+//   payment_id        Int               @id @default(autoincrement())
+//   bill              bills             @relation(fields: [bill_id], references: [bill_id])
+//   bill_id           Int
+//   customer          customer          @relation(fields: [customer_id], references: [customer_id])
+//   customer_id       Int
+//   payment_method    payments_method   @relation(fields: [payment_method_id], references: [payment_method_id])
+//   payment_method_id Int
+//   payment_amount    Decimal
+//   payment_date      DateTime          @default(now())
+//   transaction_id    String            @unique
+//   payment_status    String
+//   receipt_number    String            @unique
+//   service_charge    Decimal
+//   created_date      DateTime          @default(now())
+//   payment_receipt   payment_receipt[]
+
+//   @@map("payments") // Custom table name for better readability
+// }
+
+
+
+// schema.prisma
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-// ======================= BRANCH MODEL =======================
-// This model represents a branch of the NEA, including its details and relationships with customers and users
-model branch {
-  branch_id      Int        @id @default(autoincrement())
-  branch_name    String
-  branch_address String
-  branch_contact String
-  branch_email   String
-  created_at     DateTime   @default(now())
-  status         String
-  customer       customer[]
-  users          users[]
-
-  @@map("branches") // Custom table name for better readability
+model User {
+  userID      Int       @id @default(autoincrement())
+  username    String    @unique
+  password    String
+  name        String
+  userType    UserType  @default(Customer)
+  status      Status    @default(Active)
+  lastLogin   DateTime?
+  createdAt   DateTime  @default(now())
+  
+  // Relations
+  customer    Customer?
+  employee    Employee?
 }
 
-// ======================= DEMAND TYPE MODEL =======================
-// This model represents different types of demands that can be associated with customers, including their charges and rules for penalties and rebates
-
-model demand_types {
-  demand_type_id         Int             @id @default(autoincrement())
-  demand_type_code       String
-  demand_description     String
-  base_charge            Decimal
-  rate_per_unit          Decimal
-  minimum_service_charge Decimal
-  created_date           DateTime        @default(now())
-  status                 String
-  customer               customer[]
-  penalty_rules          penalty_rules[]
-  rebate_rules           rebate_rules[]
-
-  @@map("demand_types")
+model Branch {
+  branchID      Int       @id @default(autoincrement())
+  name          String
+  location      String
+  contactNumber String
+  inchargeName  String?
+  status        Status    @default(Active)
+  
+  // Relations
+  customers     Customer[]
+  employees     Employee[]
 }
 
-// ======================= CUSTOMER MODEL =======================
-// This model represents a customer of the NEA, including their personal details, branch association, demand type, and documents
-
-model customer {
-  customer_id        Int                  @id @default(autoincrement())
-  customer_no        String               @unique
-  sc_number          String               @unique
-  full_name          String
-  address            String
-  mobile_no          String
-  citizenship_no     String
-  date_of_birth      DateTime
-  branch             branch               @relation(fields: [branch_id], references: [branch_id])
-  branch_id          Int
-  demand_type        demand_types         @relation(fields: [demand_type_id], references: [demand_type_id])
-  demand_type_id     Int
-  registration_date  DateTime             @default(now())
-  status             String
-  created_by_users   users                @relation(fields: [created_by], references: [user_id])
-  created_by         Int
-  customer_documents customer_documents[]
-  payments           payments[]
-  meter_readings     meter_readings[]
-  bills              bills[]
-
-  @@map("customers") // Custom table name for better readability
+model Customer {
+  cusID          Int       @id @default(autoincrement())
+  userID         Int       @unique
+  scNo           String    @unique
+  fullName       String
+  address        String
+  mobileNo       String
+  citizenshipNo  String    @unique
+  dob            DateTime
+  demandType     String    // 1A, 15A, 30A
+  branchID       Int
+  citizenshipDoc String?
+  propertyDoc    String?
+  
+  // Relations
+  user           User      @relation(fields: [userID], references: [userID])
+  branch         Branch    @relation(fields: [branchID], references: [branchID])
+  bills          Bill[]
 }
 
-// ======================= PENALTY RULES MODEL =======================
-// This model defines the rules for penalties applied to customers based on overdue days, including percentage and fixed amount penalties
-
-model penalty_rules {
-  rule_id              Int          @id @default(autoincrement())
-  demand_types         demand_types @relation(fields: [demand_type_id], references: [demand_type_id])
-  demand_type_id       Int
-  overdue_days_from    Int
-  overdue_days_to      Int
-  penalty_percentage   Decimal
-  penalty_fixed_amount Decimal
-  created_date         DateTime     @default(now())
-  status               String
-
-  @@map("penalty_rules") // Custom table name for better readability
+model Bill {
+  billNo         Int       @id @default(autoincrement())
+  cusID          Int
+  billDate       DateTime  @default(now())
+  billMonth      Int
+  billYear       Int
+  previousReading Int
+  currentReading  Int
+  consumedUnits   Int
+  minimumCharge   Float
+  rate           Float
+  totalAmount     Float
+  status         BillStatus @default(Generated)
+  
+  // Relations
+  customer       Customer  @relation(fields: [cusID], references: [cusID])
+  payment        Payment?
 }
 
-// ======================= REBATE RULES MODEL =======================
-// This model defines the rules for rebates applied to customers based on early payment days, including percentage and fixed amount rebates
-
-model rebate_rules {
-  rule_id             Int          @id @default(autoincrement())
-  demand_types        demand_types @relation(fields: [demand_type_id], references: [demand_type_id])
-  demand_type_id      Int
-  early_payment_days  Int
-  rebate_percentage   Decimal
-  rebate_fixed_amount Decimal
-  created_date        DateTime     @default(now())
-  status              String
-
-  @@map("rebate_rules") // Custom table name for better readability
+model Payment {
+  paymentID      Int       @id @default(autoincrement())
+  billID         Int       @unique
+  method         PaymentMethod
+  amountPaid     Float
+  rebate         Float     @default(0)
+  penalty        Float     @default(0)
+  paymentDate    DateTime  @default(now())
+  transactionID  String?
+  
+  // Relations
+  bill           Bill      @relation(fields: [billID], references: [billNo])
 }
 
-// ======================= CUSTOMER DOCUMENTS MODEL =======================
-// This model represents documents uploaded by customers, including their type, path, and verification status
-
-model customer_documents {
-  document_id       Int       @id @default(autoincrement())
-  customer          customer  @relation(fields: [customer_id], references: [customer_id])
-  customer_id       Int
-  document_type     String
-  document_path     String
-  uploaded_date     DateTime  @default(now())
-  verified_status   String
-  verification_date DateTime?
-  verified_by_users users     @relation(fields: [verified_by], references: [user_id])
-  verified_by       Int
-
-  @@map("customer_documents") // Custom table name for better readability
+model Employee {
+  empID         Int       @id @default(autoincrement())
+  empType       EmployeeType
+  branchID      Int
+  employeeName  String
+  contactNo     String
+  userID        Int       @unique
+  status        Status    @default(Active)
+  
+  // Relations
+  branch        Branch    @relation(fields: [branchID], references: [branchID])
+  user          User      @relation(fields: [userID], references: [userID])
 }
 
-// ======================= USERS MODEL =======================
-// This model represents users of the NEA system, including their credentials, branch association, and relationships with customers and documents
-
-model users {
-  user_id              Int                    @id @default(autoincrement())
-  username             String                 @unique
-  password_hash        String
-  full_name            String
-  email                String                 @unique
-  mobile_no            String
-  user_type            String
-  branch               branch                 @relation(fields: [branch_id], references: [branch_id])
-  branch_id            Int
-  created_date         DateTime               @default(now())
-  last_login           DateTime?
-  status               String
-  customers            customer[]
-  customer_documents   customer_documents[]
-  bills                bills[]
-  meter_readings       meter_readings[]
-  activity_logs        activity_logs[]
-  login_sessions       login_sessions[]
-  system_configuration system_configuration[]
-
-  @@map("users") // Custom table name for better readability
+// Enums
+enum UserType {
+  Admin
+  BranchAdmin
+  MeterReader
+  Customer
 }
 
-// ======================= PAYMENT RECEIPT MODEL =======================
-
-model payment_receipt {
-  receipt_id     Int      @id @default(autoincrement())
-  payment        payments @relation(fields: [payment_id], references: [payment_id])
-  payment_id     Int
-  receipt_number String   @unique
-  receipt_date   DateTime @default(now())
-  generated_date DateTime @default(now())
-
-  @@map("payment_receipt") // Custom table name for better readability
+enum Status {
+  Active
+  Inactive
 }
 
-// =======================  METER READINGS MODEL =======================
-
-model meter_readings {
-  reading_id       Int      @id @default(autoincrement())
-  customer         customer @relation(fields: [customer_id], references: [customer_id])
-  customer_id      Int
-  reading_users    users    @relation(fields: [meter_reader_id], references: [user_id])
-  meter_reader_id  Int
-  reading_date     DateTime @default(now())
-  current_reading  Decimal
-  previous_reading Decimal
-  unit_consumed    Decimal
-  bill_month       DateTime
-  bill_year        Int
-  reading_status   String
-  created_date     DateTime @default(now())
-  bills            bills[]
-
-  @@map("meter_readings") // Custom table name for better readability
+enum BillStatus {
+  Generated
+  Verified
+  Paid
+  Overdue
 }
 
-// ======================= ACTIVITY LOGS MODEL =======================
-
-model activity_logs {
-  log_id            Int      @id @default(autoincrement())
-  activity_by_users users    @relation(fields: [user_id], references: [user_id])
-  user_id           Int
-  activity_type     String
-  table_affected    String
-  record_id         Int
-  old_value         String?
-  new_value         String?
-  ip_address        String
-  created_date      DateTime @default(now())
-
-  @@map("activity_logs") // Custom table name for better readability
+enum PaymentMethod {
+  Khalti
+  Esewa
+  ConnectIPS
+  MobileBanking
+  Cash
 }
 
-// ======================= LOGIN SESSIONS MODEL =======================
-model login_sessions {
-  session_id     Int       @id @default(autoincrement())
-  login_users    users     @relation(fields: [user_id], references: [user_id])
-  user_id        Int
-  login_time     DateTime  @default(now())
-  logout_time    DateTime?
-  ip_address     String
-  user_agent     String
-  session_status String
-
-  @@map("login_sessions") // Custom table name for better readability
+enum EmployeeType {
+  Admin
+  BranchAdmin
+  MeterReader
+  Accountant
 }
-
-// ======================= SYSTEM CONFIGURATION MODEL =======================
-model system_configuration {
-  config_id          Int      @id @default(autoincrement())
-  config_key         String   @unique
-  config_value       String
-  config_description String?
-  updated_by         users?   @relation(fields: [updated_by_id], references: [user_id])
-  updated_by_id      Int?
-  updated_date       DateTime @default(now())
-
-  @@map("system_configuration") // Custom table name for better readability
-}
-
-// ======================= BILLS MODEL =======================
-
-model bills {
-  bill_id                Int             @id @default(autoincrement())
-  customer               customer        @relation(fields: [customer_id], references: [customer_id])
-  customer_id            Int
-  meter_reading          meter_readings? @relation(fields: [reading_id], references: [reading_id])
-  reading_id             Int?
-  bill_number            String          @unique
-  bill_month             DateTime
-  bill_year              Int
-  current_reading        Decimal
-  previous_reading       Decimal
-  unit_consumed          Decimal
-  minimum_service_charge Decimal
-  unit_charge            Decimal
-  total_amount           Decimal
-  due_date               DateTime
-  penalty_amount         Decimal
-  rebate_amount          Decimal
-  bill_status            String
-  generated_date         DateTime        @default(now())
-  verified_by_users      users?          @relation(fields: [verified_by], references: [user_id])
-  verified_by            Int?
-  verified_date          DateTime?
-  payments               payments[]
-
-  @@map("bills") // Custom table name for better readability
-}
-
-// ======================= PAYMENTS METHOD MODEL =======================
-
-model payments_method {
-  payment_method_id         Int        @id @default(autoincrement())
-  method_name               String     @unique
-  method_code               String     @unique
-  is_active                 Boolean    @default(true)
-  service_charge_percentage Decimal
-  created_at                DateTime   @default(now())
-  payments                  payments[]
-
-  @@map("payments_method") // Custom table name for better readability
-}
-
-// ======================= PAYMENTS MODEL =======================
-
-model payments {
-  payment_id        Int               @id @default(autoincrement())
-  bill              bills             @relation(fields: [bill_id], references: [bill_id])
-  bill_id           Int
-  customer          customer          @relation(fields: [customer_id], references: [customer_id])
-  customer_id       Int
-  payment_method    payments_method   @relation(fields: [payment_method_id], references: [payment_method_id])
-  payment_method_id Int
-  payment_amount    Decimal
-  payment_date      DateTime          @default(now())
-  transaction_id    String            @unique
-  payment_status    String
-  receipt_number    String            @unique
-  service_charge    Decimal
-  created_date      DateTime          @default(now())
-  payment_receipt   payment_receipt[]
-
-  @@map("payments") // Custom table name for better readability
-}
-
