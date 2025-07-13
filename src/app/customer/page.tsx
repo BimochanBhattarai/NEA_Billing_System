@@ -8,8 +8,8 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 export default function CustomerDashboard() {
   // Mock data - replace with real API calls
   const userData = {
-    name: 'John Doe',
-    currentBill: 2450,
+    name: 'Bimochan Bhattarai',
+    BillNo: 1001,
     dueDate: '2023-12-15',
     usage: 320,
     usageTrend: 'down',
@@ -55,7 +55,7 @@ export default function CustomerDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">Rs. {userData.currentBill.toLocaleString()}</p>
+            <p className="text-2xl font-bold">Rs. {userData.BillNo.toLocaleString()}</p>
             <p className={`text-sm mt-1 ${
               daysUntilDue <= 3 ? 'text-red-600' : 'text-green-600'
             }`}>
@@ -65,7 +65,7 @@ export default function CustomerDashboard() {
             </p>
           </CardContent>
           <CardFooter className="pt-0">
-            <Button className="w-full" asChild>
+            <Button className="w-full bg-blue-600 text-white hover:bg-blue-700" asChild>
               <Link href="/customer/bills/pay">
                 Pay Now
               </Link>

@@ -17,8 +17,8 @@ import {
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
   const [activeMenu, setActiveMenu] = useState('home');
   const [user] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
+    name: 'Bimochan Bhattarai',
+    email: 'bimochan.bhattarai@example.com',
     avatar: '/avatars/default.png',
   });
 
@@ -35,7 +35,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           <div className="flex items-center space-x-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-2 focus:outline-none">
+                <button className="flex items-center space-x-2 focus:outline-none text-blue-600 hover:text-blue-800 cursor-pointer font-bold">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user.avatar} />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -46,7 +46,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-sm font-bold leading-none text-blue-600">{user.name}</p>
                     <p className="text-xs leading-none text-gray-500">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>
