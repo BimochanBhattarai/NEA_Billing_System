@@ -46,7 +46,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-bold leading-none text-blue-600">{user.name}</p>
+                    <p className="text-sm font-medium leading-none text-blue-600">{user.name}</p>
                     <p className="text-xs leading-none text-gray-500">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>

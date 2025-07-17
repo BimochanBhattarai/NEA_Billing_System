@@ -66,7 +66,7 @@ export default function CustomerDashboard() {
           </CardContent>
           <CardFooter className="pt-0">
             <Button className="w-full bg-blue-600 text-white hover:bg-blue-700" asChild>
-              <Link href="/customer/bills/pay">
+              <Link href="/customer/bills">
                 Pay Now
               </Link>
             </Button>
