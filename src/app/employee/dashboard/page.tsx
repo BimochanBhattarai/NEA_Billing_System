@@ -71,7 +71,6 @@ export default function MeterReaderDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <FiZap className="text-blue-600" />
             Meter Reading Dashboard
           </h1>
           <p className="text-gray-600">Track and manage meter reading tasks</p>

@@ -28,7 +28,9 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
       <header className="bg-white shadow-sm border-b border-gray-100">
         <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
-            <FiZap className="h-8 w-8 text-blue-600" />
+            <div className="w-15 h-15">
+              <img src="/logo.png" alt="NEA Logo" className="w-full h-full object-contain" />
+            </div>
             <span className="ml-2 text-xl font-bold">NEA Customer Portal</span>
           </div>
           
